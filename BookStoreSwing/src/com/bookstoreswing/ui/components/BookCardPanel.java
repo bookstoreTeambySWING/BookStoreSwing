@@ -3,140 +3,158 @@ package com.bookstoreswing.ui.components;
 import com.bookstoreswing.model.Book;
 import com.bookstoreswing.service.CartService;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.net.URL;
 
 /**
- * Card used in homepage featured grid — golden border, cover, title, price
+ * Book card with real image loading from assets
  */
 public class BookCardPanel extends JPanel {
 
-    private final Book book;
-    private final CartService cartService;
-
     public BookCardPanel(Book book, CartService cartService) {
-        this.book = book;
-        this.cartService = cartService;
-        initUI();
-    }
-
-    private void initUI() {
-        setOpaque(false);
         setLayout(new BorderLayout());
-        setPreferredSize(new Dimension(165, 320));
-        setBorder(new EmptyBorder(6, 6, 6, 6));
+        setOpaque(false);
+        setPreferredSize(new Dimension(180, 320));
+        setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(140, 100, 95), 2),
+                BorderFactory.createEmptyBorder(8, 8, 8, 8)
+        ));
 
-        JPanel card = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                // border
-                g2.setColor(new Color(170,125,100,200));
-                g2.setStroke(new BasicStroke(2f));
-                g2.drawRoundRect(4, 4, getWidth()-9, getHeight()-9, 8, 8);
-                // translucent background
-                g2.setColor(new Color(0,0,0,40));
-                g2.fillRoundRect(5,5,getWidth()-10,getHeight()-10,8,8);
-                g2.dispose();
-                super.paintComponent(g);
-            }
-        };
-        card.setOpaque(false);
-        card.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        // COVER area
+        JPanel coverPanel = new JPanel();
+        coverPanel.setOpaque(false);
+        coverPanel.setPreferredSize(new Dimension(160, 200));
+        coverPanel.setLayout(null);
 
-        // cover
-        JLabel cover = new JLabel();
-        cover.setHorizontalAlignment(SwingConstants.CENTER);
-        cover.setPreferredSize(new Dimension(140, 200));
-        cover.setIcon(loadCover(book.getImagePath(), 140, 200));
-        card.add(cover, BorderLayout.NORTH);
+        // Try to load actual book image
+        ImageIcon bookImage = loadBookImage(book);
+        JLabel imageLabel;
 
-        // title + author
-        JPanel info = new JPanel();
-        info.setOpaque(false);
-        info.setLayout(new BoxLayout(info, BoxLayout.Y_AXIS));
+        if (bookImage != null) {
+            Image scaledImage = bookImage.getImage().getScaledInstance(160, 200, Image.SCALE_SMOOTH);
+            imageLabel = new JLabel(new ImageIcon(scaledImage));
+        } else {
+            imageLabel = new JLabel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    g.setColor(new Color(90, 60, 60));
+                    g.fillRect(0, 0, getWidth(), getHeight());
+                    g.setColor(new Color(235, 220, 200));
+                    g.setFont(new Font("Serif", Font.BOLD, 18));
+                    String t = book.getTitle() == null ? "Book" : book.getTitle();
+                    String initials = t.length() >= 2 ? t.substring(0, 2).toUpperCase() : t.toUpperCase();
+                    FontMetrics fm = g.getFontMetrics();
+                    int x = (getWidth() - fm.stringWidth(initials)) / 2;
+                    int y = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
+                    g.drawString(initials, x, y);
+                }
+            };
+        }
 
-        JLabel titleLbl = new JLabel("<html><center>" + safeTruncate(book.getTitle(), 50) + "</center></html>");
-        titleLbl.setFont(new Font("Serif", Font.BOLD, 13));
-        titleLbl.setForeground(new Color(245,235,230));
-        titleLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+        imageLabel.setBounds(0, 0, 160, 200);
+        coverPanel.add(imageLabel);
 
-        JLabel authorLbl = new JLabel(book.getAuthor());
-        authorLbl.setFont(new Font("SansSerif", Font.PLAIN, 11));
-        authorLbl.setForeground(new Color(210,190,170));
-        authorLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // heart button
+        JButton heart = new JButton("♡");
+        heart.setBorderPainted(false);
+        heart.setContentAreaFilled(false);
+        heart.setForeground(new Color(220, 200, 180));
+        heart.setBounds(120, 10, 30, 30);
 
-        info.add(Box.createVerticalStrut(8));
-        info.add(titleLbl);
-        info.add(Box.createVerticalStrut(6));
-        info.add(authorLbl);
-        info.add(Box.createVerticalStrut(10));
+        heart.addActionListener(e -> {
+            heart.setText("♥");
+            heart.setForeground(Color.RED);
+            JOptionPane.showMessageDialog(this, book.getTitle() + " added to favourites");
+        });
 
-        // price area
+        coverPanel.add(heart);
+        add(coverPanel, BorderLayout.NORTH);
+
+        // Title and author
+        JPanel mid = new JPanel(new GridLayout(2, 1));
+        mid.setOpaque(false);
+
+        String displayTitle = book.getTitle();
+        if (displayTitle.length() > 30) {
+            displayTitle = displayTitle.substring(0, 27) + "...";
+        }
+
+        JLabel title = new JLabel("<html><div style='text-align:center;'>" + displayTitle + "</div></html>");
+        title.setFont(new Font("Serif", Font.BOLD, 13));
+        title.setForeground(new Color(245, 235, 220));
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+
+        String displayAuthor = book.getAuthor();
+        if (displayAuthor.length() > 25) {
+            displayAuthor = displayAuthor.substring(0, 22) + "...";
+        }
+
+        JLabel author = new JLabel(displayAuthor, SwingConstants.CENTER);
+        author.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        author.setForeground(new Color(210, 190, 170));
+
+        mid.add(title);
+        mid.add(author);
+        mid.setBorder(BorderFactory.createEmptyBorder(8, 4, 8, 4));
+        add(mid, BorderLayout.CENTER);
+
+        // Price and add button
         JPanel bottom = new JPanel(new BorderLayout());
         bottom.setOpaque(false);
-        JLabel price = new JLabel(String.format("%.2f €", book.getPrice()));
+
+        String formattedPrice = String.format("%.2f", book.getPrice() / 100.0).replace(".", ",") + " €";
+        JLabel price = new JLabel(formattedPrice);
         price.setFont(new Font("Serif", Font.BOLD, 13));
-        price.setForeground(new Color(240,220,190));
-        price.setBorder(BorderFactory.createEmptyBorder(0,6,6,6));
-        bottom.add(price, BorderLayout.WEST);
+        price.setForeground(new Color(235, 215, 190));
+        price.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
 
-        JButton add = new JButton("Add");
-        add.setFocusPainted(false);
-        add.setBackground(new Color(140,95,85));
-        add.setForeground(new Color(245,235,230));
-        add.setBorder(BorderFactory.createEmptyBorder(6, 10, 6, 10));
-        add.addActionListener(e -> {
-            cartService.addBook(book); // FIXED
-            JOptionPane.showMessageDialog(this, "Added: " + book.getTitle());
+        JButton addBtn = new JButton("Add");
+        addBtn.setBackground(new Color(120, 78, 76));
+        addBtn.setForeground(Color.WHITE);
+        addBtn.setFocusPainted(false);
+        addBtn.addActionListener(e -> {
+            if (cartService != null) {
+                cartService.addBook(book);
+                JOptionPane.showMessageDialog(this, book.getTitle() + " added to cart");
+            }
         });
-        bottom.add(add, BorderLayout.EAST);
 
-        info.add(bottom);
-
-        card.add(info, BorderLayout.CENTER);
-
-        add(card, BorderLayout.CENTER);
+        bottom.add(price, BorderLayout.WEST);
+        bottom.add(addBtn, BorderLayout.EAST);
+        bottom.setBorder(BorderFactory.createEmptyBorder(6, 4, 4, 4));
+        add(bottom, BorderLayout.SOUTH);
     }
 
-    private ImageIcon loadCover(String path, int w, int h) {
+    private ImageIcon loadBookImage(Book book) {
+        if (book.getImagePath() == null || book.getImagePath().isEmpty()) {
+            return null;
+        }
+
         try {
-            // First try resource
-            if (path != null && path.startsWith("/")) {
-                URL u = getClass().getResource(path);
-                if (u != null) {
-                    Image img = ImageIO.read(u).getScaledInstance(w, h, Image.SCALE_SMOOTH);
-                    return new ImageIcon(img);
+            String[] possiblePaths = {
+                book.getImagePath(),
+                "src/" + book.getImagePath(),
+                "assets/" + book.getImagePath()
+            };
+
+            for (String path : possiblePaths) {
+                java.net.URL imageUrl = getClass().getResource("/" + path);
+                if (imageUrl != null) {
+                    return new ImageIcon(imageUrl);
+                }
+
+                File imageFile = new File(path);
+                if (imageFile.exists()) {
+                    return new ImageIcon(imageFile.getAbsolutePath());
                 }
             }
 
-            // Then try file in src/assets
-            File f = new File("src/assets/" + path);
-            if (f.exists()) {
-                Image img = ImageIO.read(f).getScaledInstance(w, h, Image.SCALE_SMOOTH);
-                return new ImageIcon(img);
-            }
+        } catch (Exception e) {
+            System.err.println("Error loading image: " + book.getTitle());
+        }
 
-        } catch (Exception ignored) {}
-
-        // placeholder
-        BufferedImage ph = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-        Graphics g = ph.getGraphics();
-        g.setColor(new Color(160,160,160));
-        g.fillRect(0,0,w,h);
-        g.dispose();
-        return new ImageIcon(ph);
-    }
-
-    private String safeTruncate(String s, int max) {
-        if (s == null) return "";
-        if (s.length() <= max) return s;
-        return s.substring(0, max-3) + "...";
+        return null;
     }
 }
