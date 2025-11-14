@@ -7,6 +7,7 @@ import com.bookstoreswing.service.CartService;
 import com.bookstoreswing.model.CartItem;
 import com.bookstoreswing.model.Book;
 import java.util.List;
+import com.bookstoreswing.ui.components.HeaderPanel;
 
 public class CartPage extends JFrame {
 
@@ -37,29 +38,43 @@ public class CartPage extends JFrame {
         };
         setContentPane(root);
 
-        JPanel nav = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 15));
-        nav.setOpaque(false);
+        HeaderPanel header = new HeaderPanel("Antiquarian");
+        root.add(header, BorderLayout.NORTH);
+        header.setActivePage("Cart");
+     // Navigation buttons actions
+        header.addHomeListener(e -> {
+            new HomeWindow().setVisible(true);
+            dispose();
+        });
+        
 
-        JLabel brand = new JLabel("📚 Antiquarian");
-        brand.setFont(new Font("Georgia", Font.BOLD, 22));
-        brand.setForeground(new Color(247, 223, 173));
+        header.addBooksListener(e -> {
+            new BookWindow().setVisible(true);
+            dispose();
+        });
 
-        nav.add(brand);
-        root.add(nav, BorderLayout.NORTH);
+        header.addCartListener(e -> {
+            new CartPage(cartService).setVisible(true);
+            dispose();
+        });
+
 
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setOpaque(false);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
 
-        JLabel header = new JLabel("Your Cart");
-        header.setFont(new Font("Georgia", Font.BOLD, 34));
-        header.setForeground(new Color(245, 230, 210));
+        JLabel titleLabel = new JLabel("Your Cart");
+        titleLabel.setFont(new Font("Georgia", Font.BOLD, 34));
+        titleLabel.setForeground(new Color(245, 230, 210));
+
+        headerPanel.add(titleLabel, BorderLayout.NORTH);
+
 
         subtitleLabel = new JLabel();
         subtitleLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
         subtitleLabel.setForeground(new Color(230, 210, 180));
 
-        headerPanel.add(header, BorderLayout.NORTH);
+      
         headerPanel.add(subtitleLabel, BorderLayout.SOUTH);
 
         listPanel = new JPanel();
