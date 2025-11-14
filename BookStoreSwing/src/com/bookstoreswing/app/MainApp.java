@@ -1,8 +1,9 @@
 package com.bookstoreswing.app;
 
 import javax.swing.SwingUtilities;
+import com.bookstoreswing.ui.windows.HomeWindow;
 
-import com.bookstoreswing.ui.components.HomeWindow;
+
 
 /**
  * Main application entry point

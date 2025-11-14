@@ -3,7 +3,6 @@ package com.bookstoreswing.ui.windows;
 import javax.swing.*;
 import java.awt.*;
 import com.bookstoreswing.ui.components.HeaderPanel;
-
 public class BookWindow extends JFrame {
 
     public BookWindow() {
