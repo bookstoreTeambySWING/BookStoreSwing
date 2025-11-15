@@ -13,16 +13,16 @@ public class HeaderPanel extends JPanel {
 
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(getWidth(), 70));
-        setBackground(new Color(75, 58, 58)); // Correct navbar color
+        setBackground(new Color(75, 58, 58)); 
         setBorder(BorderFactory.createEmptyBorder(8, 25, 8, 25));
 
-        // LEFT – LOGO + TITLE
+        // LEFT: LOGO + TITLE
         add(createLogo(title), BorderLayout.WEST);
 
-        // CENTER – SEARCH BAR
+        // CENTER: SEARCH BAR (RESTORED)
         add(createSearchBar(), BorderLayout.CENTER);
 
-        // RIGHT – NAVIGATION BUTTONS
+        // RIGHT: NAV BUTTONS
         add(createNavButtons(), BorderLayout.EAST);
 
         setActivePage("Home");
@@ -49,7 +49,7 @@ public class HeaderPanel extends JPanel {
     }
 
     // ---------------------------------------------------------
-    // SEARCH BAR
+    // SEARCH BAR (VISUAL ONLY – NO FUNCTION)
     // ---------------------------------------------------------
     private JPanel createSearchBar() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
@@ -71,6 +71,21 @@ public class HeaderPanel extends JPanel {
         searchBtn.setPreferredSize(new Dimension(45, 38));
         searchBtn.setBackground(new Color(0, 0, 0, 30));
         searchBtn.setForeground(Color.WHITE);
+
+        // 🔹 No functionality — only UI
+        searchBtn.addActionListener(e -> {
+            JOptionPane.showMessageDialog(this,
+                "Search feature disabled.",
+                "Search",
+                JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        field.addActionListener(e -> {
+            JOptionPane.showMessageDialog(this,
+                "Search feature disabled.",
+                "Search",
+                JOptionPane.INFORMATION_MESSAGE);
+        });
 
         searchBox.add(field, BorderLayout.CENTER);
         searchBox.add(searchBtn, BorderLayout.EAST);
@@ -114,7 +129,6 @@ public class HeaderPanel extends JPanel {
                 btn.setContentAreaFilled(true);
                 btn.setBackground(new Color(110, 85, 85));
             }
-
             public void mouseExited(java.awt.event.MouseEvent e) {
                 if (!btn.getText().startsWith("●")) {
                     btn.setContentAreaFilled(false);
@@ -128,7 +142,7 @@ public class HeaderPanel extends JPanel {
     }
 
     // ---------------------------------------------------------
-    // ACTIVATE PAGE
+    // ACTIVE PAGE HIGHLIGHT
     // ---------------------------------------------------------
     public void setActivePage(String page) {
         this.currentPage = page;
@@ -162,5 +176,21 @@ public class HeaderPanel extends JPanel {
 
     public String getCurrentPage() {
         return currentPage;
+    }
+
+    // ---------------------------------------------------------
+    // PUBLIC LISTENER METHODS
+    // ---------------------------------------------------------
+    public void addHomeListener(ActionListener l) {
+        homeBtn.addActionListener(l);
+    }
+    public void addBooksListener(ActionListener l) {
+        booksBtn.addActionListener(l);
+    }
+    public void addFavoriteListener(ActionListener l) {
+        favoriteBtn.addActionListener(l);
+    }
+    public void addCartListener(ActionListener l) {
+        cartBtn.addActionListener(l);
     }
 }
