@@ -52,7 +52,7 @@ public class BooksPanel extends JPanel {
         JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new BorderLayout());
         headerPanel.setOpaque(false);
-        headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(20, 30, 10, 30));
 
         // Titre
         JLabel titleLabel = new JLabel("Our Collection");
@@ -70,77 +70,73 @@ public class BooksPanel extends JPanel {
         titlePanel.add(subtitleLabel, BorderLayout.SOUTH);
         titlePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
 
-        // Filtres - VERSION FINALE
-        JPanel filterPanel = new JPanel(new BorderLayout(20, 0));
+        // Filtres - Barre de recherche et ComboBox
+        JPanel filterPanel = new JPanel(new BorderLayout(15, 0));
         filterPanel.setOpaque(false);
 
-        // Barre de recherche large
+        // Barre de recherche
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setOpaque(false);
         
         JTextField searchField = new JTextField();
         searchField.setText("Search by title or authors...");
-        searchField.setForeground(new Color(80, 60, 50)); // Texte plus foncé pour meilleure visibilité
-        searchField.setBackground(new Color(220, 200, 180));
-        searchField.setCaretColor(new Color(80, 60, 50));
+        searchField.setForeground(new Color(70, 50, 40));
+        searchField.setBackground(new Color(230, 210, 190));
+        searchField.setCaretColor(new Color(70, 50, 40));
         searchField.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(200, 180, 160), 2),
-            BorderFactory.createEmptyBorder(8, 15, 8, 15)
+            BorderFactory.createEmptyBorder(8, 12, 8, 12)
         ));
-        searchField.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        searchField.setFont(new Font("SansSerif", Font.PLAIN, 13));
         
         // Bouton de recherche
         JButton searchButton = new JButton("🔍");
-        searchButton.setPreferredSize(new Dimension(50, 35));
+        searchButton.setPreferredSize(new Dimension(45, 35));
         searchButton.setBackground(new Color(180, 150, 130));
         searchButton.setForeground(Color.WHITE);
         searchButton.setBorder(BorderFactory.createLineBorder(new Color(200, 180, 160), 1));
         searchButton.setFocusPainted(false);
-        searchButton.setFont(new Font("SansSerif", Font.BOLD, 14));
+        searchButton.setFont(new Font("SansSerif", Font.BOLD, 12));
         
         searchPanel.add(searchField, BorderLayout.CENTER);
         searchPanel.add(searchButton, BorderLayout.EAST);
         
-        // Catégories avec meilleure visibilité
-        JPanel categoryPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        categoryPanel.setOpaque(false);
+        // ComboBox des catégories - AGRANDIE
+        JPanel categoryComboPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        categoryComboPanel.setOpaque(false);
         
-        // ComboBox des catégories avec texte plus visible
         categoryComboBox = new JComboBox<>();
         
-        // AJOUT: Toutes les catégories comme sur ta photo
         String[] allCategories = {"All books", "Romance", "Historical", "Fantasy", "Guerre"};
         for (String category : allCategories) {
             categoryComboBox.addItem(category);
         }
         
-        // Style amélioré pour meilleure visibilité
-        categoryComboBox.setBackground(new Color(220, 200, 180));
-        categoryComboBox.setForeground(new Color(80, 60, 50)); // Texte plus foncé
+        // COMBOBOX AGRANDIE
+        categoryComboBox.setBackground(new Color(230, 210, 190));
+        categoryComboBox.setForeground(new Color(70, 50, 40));
         categoryComboBox.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(200, 180, 160), 2),
-            BorderFactory.createEmptyBorder(8, 15, 8, 15)
+            BorderFactory.createEmptyBorder(6, 12, 6, 12)
         ));
-        categoryComboBox.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        categoryComboBox.setFont(new Font("SansSerif", Font.PLAIN, 13));
         categoryComboBox.setPreferredSize(new Dimension(180, 35));
         
-        // Renderer avec meilleure visibilité
         categoryComboBox.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 
-                // Icônes différentes selon la catégorie
-                String icon = "📚"; // Icône par défaut
+                String icon = "📚";
                 if ("Romance".equals(value)) icon = "❤️";
                 else if ("Historical".equals(value)) icon = "🏛️";
                 else if ("Fantasy".equals(value)) icon = "🧙";
                 else if ("Guerre".equals(value)) icon = "⚔️";
                 
                 label.setText(icon + " " + value.toString());
-                label.setForeground(new Color(80, 60, 50)); // Texte foncé pour bonne visibilité
-                label.setBorder(BorderFactory.createEmptyBorder(5, 8, 5, 8));
-                label.setFont(new Font("SansSerif", Font.PLAIN, 13));
+                label.setForeground(new Color(70, 50, 40));
+                label.setFont(new Font("SansSerif", Font.PLAIN, 12));
+                label.setBorder(BorderFactory.createEmptyBorder(3, 5, 3, 5));
                 return label;
             }
         });
@@ -153,16 +149,68 @@ public class BooksPanel extends JPanel {
             }
         });
 
-        categoryPanel.add(categoryComboBox);
+        categoryComboPanel.add(categoryComboBox);
         
-        // Disposition
+        // Disposition barre recherche + ComboBox
         filterPanel.add(searchPanel, BorderLayout.CENTER);
-        filterPanel.add(categoryPanel, BorderLayout.EAST);
+        filterPanel.add(categoryComboPanel, BorderLayout.EAST);
 
-        headerPanel.add(titlePanel, BorderLayout.NORTH);
-        headerPanel.add(filterPanel, BorderLayout.SOUTH);
+        // BARRE DE CATÉGORIES HORIZONTALE - ALIGNÉE À GAUCHE
+        JPanel categoriesBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        categoriesBarPanel.setOpaque(false);
+        categoriesBarPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 5, 0));
+        
+        // Créer les boutons de catégories
+        String[] categories = {"All books", "Romance", "Historical", "Fantasy", "Guerre"};
+        for (String category : categories) {
+            JButton categoryButton = createCategoryButton(category);
+            categoriesBarPanel.add(categoryButton);
+        }
+
+        // Assemblage final
+        JPanel topSection = new JPanel(new BorderLayout());
+        topSection.setOpaque(false);
+        topSection.add(titlePanel, BorderLayout.NORTH);
+        topSection.add(filterPanel, BorderLayout.CENTER);
+        topSection.add(categoriesBarPanel, BorderLayout.SOUTH);
+
+        headerPanel.add(topSection, BorderLayout.NORTH);
 
         return headerPanel;
+    }
+
+    // MÉTHODE pour créer les boutons de catégories
+    private JButton createCategoryButton(String category) {
+        JButton button = new JButton(category);
+        
+        button.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        button.setForeground(new Color(245, 235, 220));
+        button.setBackground(new Color(100, 80, 70));
+        button.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(200, 180, 160), 1),
+            BorderFactory.createEmptyBorder(10, 20, 10, 20)
+        ));
+        button.setFocusPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setPreferredSize(new Dimension(120, 40));
+        
+        // Effet hover
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(120, 100, 90));
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(100, 80, 70));
+            }
+        });
+        
+        // Action lors du clic
+        button.addActionListener(e -> {
+            categoryComboBox.setSelectedItem(category);
+            loadBooks(category);
+        });
+        
+        return button;
     }
 
     private void loadBooks(String category) {

@@ -20,6 +20,11 @@ public class Book {
         this.imagePath = imagePath;
         this.category = category; // AJOUT
     }
+ // OLD constructor restored (makes your CartPage work)
+    public Book(String id, String title, String author, double price, String imagePath) {
+        this(id, title, author, price, imagePath, "");
+    }
+
 
     public String getId(){ return id; }
     public String getTitle(){ return title; }

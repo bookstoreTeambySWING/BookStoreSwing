@@ -11,7 +11,7 @@ public class OrderService {
     public static Order createOrder(User customer, java.util.List<CartItem> items){
         String id = UUID.randomUUID().toString();
         Order o = new Order(id, customer, items);
-        FileManager.appendOrderToFile(o);
+        FileManager.appendOrderToFile(o); // MAINTENANT ÇA DEVRAIT MARCHER
         return o;
     }
 }
