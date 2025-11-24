@@ -3,12 +3,11 @@ package com.bookstoreswing.ui.panels;
 import com.bookstoreswing.service.FavoriteService;
 import com.bookstoreswing.model.Book;
 import com.bookstoreswing.ui.components.BookCardPanel;
-import com.bookstoreswing.utils.ImageLoader;
 import com.bookstoreswing.app.MainApp;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
+import com.bookstoreswing.utils.ImageLoader;
 
 public class FavoritePanel extends JPanel {
 
@@ -19,13 +18,13 @@ public class FavoritePanel extends JPanel {
         setLayout(new BorderLayout());
         setOpaque(false);
 
-        bg = ImageLoader.load("background/bg.jpg");
-
+        // Use the uploaded file as the background
+        bg = ImageLoader.loadImage("resources/assets/background/bg.jpg");
         JPanel listPanel = new JPanel();
         listPanel.setOpaque(false);
         listPanel.setLayout(new GridLayout(0, 3, 25, 25));
 
-        List<Book> favs = favService.getAll();
+        java.util.List<Book> favs = favService.getAll();
 
         if (favs.isEmpty()) {
             listPanel.setLayout(new GridBagLayout());
@@ -42,7 +41,6 @@ public class FavoritePanel extends JPanel {
         JScrollPane scroll = new JScrollPane(listPanel);
         scroll.setOpaque(false);
         scroll.getViewport().setOpaque(false);
-
         scroll.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
 
         add(scroll, BorderLayout.CENTER);

@@ -23,7 +23,8 @@ public class CartPage extends JFrame {
 
         this.cartService = cartService;
 
-        bgImage = ImageLoader.loadImage("background/bg.jpg");
+        // Load background using ImageLoader with correct path
+        bgImage = ImageLoader.loadImage("assets/background/bg.jpg");
 
         setTitle("Your Cart");
         setSize(1100, 720);
@@ -35,7 +36,7 @@ public class CartPage extends JFrame {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 if (bgImage != null)
-                    g.drawImage(bgImage, 0, 0, getWidth(), getHeight(), null);
+                    g.drawImage(bgImage, 0, 0, getWidth(), getHeight(), this);
                 else {
                     g.setColor(new Color(35, 30, 30));
                     g.fillRect(0, 0, getWidth(), getHeight());
@@ -104,7 +105,6 @@ public class CartPage extends JFrame {
 
         subtitleLabel.setText(totalQuantity + " items in your collection");
 
-
         if (items.isEmpty()) {
             JPanel emptyPanel = new JPanel();
             emptyPanel.setOpaque(false);
@@ -141,9 +141,6 @@ public class CartPage extends JFrame {
         listPanel.repaint();
     }
 
-    // -----------------------------------------------------
-    // BOOK ITEM PANEL
-    // -----------------------------------------------------
     private class BookItemPanel extends JPanel {
 
         private CartItem cartItem;
@@ -158,7 +155,7 @@ public class CartPage extends JFrame {
             setPreferredSize(new Dimension(850, 170));
 
             // COVER IMAGE
-            ImageIcon coverIcon = ImageLoader.loadIcon(item.getBook().getImagePath(), 120, 160);
+            ImageIcon coverIcon = ImageLoader.loadIcon("assets/" + item.getBook().getImagePath(), 120, 160);
             JLabel cover = new JLabel(coverIcon);
             add(cover, BorderLayout.WEST);
 
@@ -186,15 +183,15 @@ public class CartPage extends JFrame {
 
             add(center, BorderLayout.CENTER);
 
-            // RIGHT SIDE (QTY)
+            // RIGHT PANEL
             JPanel right = new JPanel();
             right.setOpaque(false);
             right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
             right.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-            JButton minus  = new JButton(ImageLoader.loadScaledIcon("icons/minus.png", 22, 22));
-            JButton plus   = new JButton(ImageLoader.loadScaledIcon("icons/plus.png", 22, 22));
-            JButton remove = new JButton(ImageLoader.loadScaledIcon("icons/trash.png", 26, 26));
+            JButton minus  = new JButton(ImageLoader.loadIcon("assets/icons/minus.png", 22, 22));
+            JButton plus   = new JButton(ImageLoader.loadIcon("assets/icons/plus.png", 22, 22));
+            JButton remove = new JButton(ImageLoader.loadIcon("assets/icons/trash.png", 26, 26));
 
             for (JButton b : new JButton[]{minus, plus, remove}) {
                 b.setContentAreaFilled(false);
@@ -218,7 +215,6 @@ public class CartPage extends JFrame {
 
             add(right, BorderLayout.EAST);
 
-            // ---- FIXED LISTENERS (ONLY ONE EACH!) ----
             minus.addActionListener(e -> {
                 int idx = cartService.getItems().indexOf(cartItem);
                 cartService.decreaseQuantity(idx);

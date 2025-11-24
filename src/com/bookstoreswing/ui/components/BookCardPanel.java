@@ -12,101 +12,104 @@ public class BookCardPanel extends JPanel {
 
     public BookCardPanel(Book book, CartService cartService) {
 
-        setLayout(new BorderLayout());
-        setOpaque(false);
-        setPreferredSize(new Dimension(220, 360));   // bigger cards
+        // ---------- CARD STYLE ----------
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setOpaque(true);
+        setBackground(new Color(55, 40, 35, 175));   // nicer transparent brown
         setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(140, 100, 95), 2),
-                BorderFactory.createEmptyBorder(8, 8, 8, 8)
+                BorderFactory.createLineBorder(new Color(130, 115, 105), 2),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)
         ));
+        setPreferredSize(new Dimension(195, 360)); // same size as screenshot
 
-        // ---------------- COVER IMAGE ----------------
-        JPanel coverPanel = new JPanel(null);
-        coverPanel.setOpaque(false);
-        coverPanel.setPreferredSize(new Dimension(200, 260));
 
-        // Auto prepend assets/ if missing
-        String imgPath = book.getImagePath() == null ? "" : book.getImagePath();
-        if (!imgPath.startsWith("assets/") && !imgPath.isEmpty()) {
+        // ---------- IMAGE CONTAINER ----------
+        JPanel imageContainer = new JPanel();
+        imageContainer.setOpaque(false);
+        imageContainer.setLayout(new OverlayLayout(imageContainer));
+        imageContainer.setMaximumSize(new Dimension(180, 250));
+
+        String imgPath = book.getImagePath();
+        if (imgPath != null && !imgPath.startsWith("assets/"))
             imgPath = "assets/" + imgPath;
+
+        ImageIcon icon = ImageLoader.loadIcon(imgPath, 180, 250);
+        JLabel coverLabel;
+
+        if (icon != null) coverLabel = new JLabel(icon);
+        else {
+            coverLabel = new JLabel("?", SwingConstants.CENTER);
+            coverLabel.setOpaque(true);
+            coverLabel.setBackground(new Color(100, 70, 65));
+            coverLabel.setForeground(Color.WHITE);
         }
 
-        ImageIcon coverIcon = ImageLoader.loadIcon(imgPath, 200, 260);
-        JLabel imgLabel;
+        coverLabel.setAlignmentX(0.5f);
+        imageContainer.add(coverLabel);
 
-        if (coverIcon != null) {
-            imgLabel = new JLabel(coverIcon);
-        } else {
-            imgLabel = new JLabel("?", SwingConstants.CENTER);
-            imgLabel.setOpaque(true);
-            imgLabel.setBackground(new Color(90, 60, 60));
-            imgLabel.setForeground(Color.WHITE);
-        }
 
-        imgLabel.setBounds(0, 0, 200, 260);
-        coverPanel.add(imgLabel);
+        // ---------- HEART ICON ----------
+        ImageIcon emptyHeart = ImageLoader.loadIcon("assets/icons/hearticon.png", 28, 28);
+        ImageIcon fullHeart  = ImageLoader.loadIcon("assets/icons/heartfilled.png", 28, 28);
 
-        // ---------------- HEART ICON ----------------
-        // NOTE: you named them `hearticon` and `heartfilled` — using exactly those names:
-        ImageIcon emptyHeart = ImageLoader.loadIcon("assets/icons/hearticon.png", 30, 30);
-        ImageIcon fullHeart  = ImageLoader.loadIcon("assets/icons/heartfilled.png", 30, 30);
+        JButton heartBtn = new JButton(
+                MainApp.FAVORITES.has(book) && fullHeart != null
+                        ? fullHeart
+                        : (emptyHeart != null ? emptyHeart : new ImageIcon())
+        );
 
-        JButton heart;
-        if (MainApp.FAVORITES.has(book) && fullHeart != null) {
-            heart = new JButton(fullHeart);
-        } else if (emptyHeart != null) {
-            heart = new JButton(emptyHeart);
-        } else {
-            heart = new JButton("♡"); // Text fallback
-        }
+        heartBtn.setContentAreaFilled(false);
+        heartBtn.setBorderPainted(false);
+        heartBtn.setFocusPainted(false);
+        heartBtn.setOpaque(false);
 
-        heart.setBorderPainted(false);
-        heart.setContentAreaFilled(false);
-        heart.setFocusPainted(false);
-        heart.setBounds(155, 10, 30, 30);
+        JPanel heartPanel = new JPanel(new BorderLayout());
+        heartPanel.setOpaque(false);
+        heartPanel.add(heartBtn, BorderLayout.EAST);
 
-        heart.addActionListener(e -> {
-            MainApp.FAVORITES.add(book);
-            if (fullHeart != null) heart.setIcon(fullHeart);
-            heart.setEnabled(false);
-            JOptionPane.showMessageDialog(this, book.getTitle() + " added to favorites");
-        });
+        imageContainer.add(heartPanel);
 
-        if (MainApp.FAVORITES.has(book)) {
-            heart.setEnabled(false);
-        }
+        add(imageContainer);
+        add(Box.createVerticalStrut(8));
 
-        coverPanel.add(heart);
-        add(coverPanel, BorderLayout.NORTH);
 
-        // ---------------- TITLE + AUTHOR ----------------
-        JPanel mid = new JPanel(new GridLayout(2, 1));
-        mid.setOpaque(false);
+        // ---------- TITLE ----------
+        JLabel title = new JLabel(
+                "<html><div style='text-align:center;'>" + book.getTitle() + "</div></html>",
+                SwingConstants.CENTER
+        );
+        title.setForeground(new Color(245, 230, 215));
+        title.setFont(new Font("Serif", Font.BOLD, 13));
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel title = new JLabel("<html><center>" + book.getTitle() + "</center></html>");
-        title.setForeground(new Color(245, 235, 220));
-        title.setFont(new Font("Serif", Font.BOLD, 14));
+        add(title);
 
+
+        // ---------- AUTHOR ----------
         JLabel author = new JLabel(book.getAuthor(), SwingConstants.CENTER);
-        author.setForeground(new Color(210, 190, 170));
-        author.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        author.setForeground(new Color(210, 200, 185));
+        author.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        author.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        mid.add(title);
-        mid.add(author);
-        add(mid, BorderLayout.CENTER);
+        add(author);
+        add(Box.createVerticalStrut(10));
 
-        // ---------------- PRICE + ADD BUTTON ----------------
+
+        // ---------- PRICE + BUTTON ----------
         JPanel bottom = new JPanel(new BorderLayout());
         bottom.setOpaque(false);
 
         JLabel price = new JLabel(String.format("%.2f €", book.getPrice() / 100.0).replace('.', ','));
         price.setForeground(new Color(240, 220, 190));
-        price.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
         price.setFont(new Font("Serif", Font.BOLD, 14));
+        price.setBorder(BorderFactory.createEmptyBorder(6, 4, 4, 4));
 
-        JButton addBtn = new JButton("Add");
+        JButton addBtn = new JButton("Add to cart");
+        addBtn.setFont(new Font("SansSerif", Font.PLAIN, 12));
         addBtn.setBackground(new Color(120, 78, 76));
         addBtn.setForeground(Color.WHITE);
+        addBtn.setFocusPainted(false);
+        addBtn.setPreferredSize(new Dimension(90, 30));
 
         addBtn.addActionListener(e -> {
             cartService.addBook(book);
@@ -115,6 +118,18 @@ public class BookCardPanel extends JPanel {
 
         bottom.add(price, BorderLayout.WEST);
         bottom.add(addBtn, BorderLayout.EAST);
-        add(bottom, BorderLayout.SOUTH);
+
+        add(bottom);
+
+
+        // ---------- HEART LOGIC ----------
+        heartBtn.setEnabled(!MainApp.FAVORITES.has(book));
+
+        heartBtn.addActionListener(e -> {
+            MainApp.FAVORITES.add(book);
+            if (fullHeart != null) heartBtn.setIcon(fullHeart);
+            heartBtn.setEnabled(false);
+            JOptionPane.showMessageDialog(this, book.getTitle() + " added to favorites");
+        });
     }
 }
