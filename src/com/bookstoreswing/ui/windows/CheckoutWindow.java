@@ -139,14 +139,21 @@ public class CheckoutWindow extends JFrame {
 
         if (success) {
 
-            double sub = cartService.getTotal() / 100.0;
-            double taxes = sub * 0.08;
-            double finalTotal = sub + taxes;
+            // Calculate total from the cart (in €)
+        	double subtotal = cartService.getTotal() / 100.0;
+        	double taxes = subtotal * 0.08;
+        	double finalTotal = subtotal + taxes;
 
-            cartService.clear();
-            new ThankYouWindow(finalTotal).setVisible(true);
-            dispose();
+        	// Show the confirmation first
+        	new ThankYouWindow(finalTotal).setVisible(true);
+
+        	// THEN clear the cart (after using it)
+        	cartService.clear();
+
+        	dispose();
+
         }
+
 
     }
 

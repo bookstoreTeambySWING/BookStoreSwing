@@ -97,6 +97,7 @@ public class ThankYouWindow extends JFrame {
 
         // values
         JLabel val1 = new JLabel(String.format("%.2f €", totalAmount).replace('.', ','));
+        val1.setHorizontalAlignment(SwingConstants.RIGHT);
         JLabel val2 = new JLabel("bank transfer");
         val1.setHorizontalAlignment(SwingConstants.RIGHT);
         val2.setHorizontalAlignment(SwingConstants.RIGHT);

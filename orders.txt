@@ -16,3 +16,59 @@ Total: 2350.0 DA
 Items:
 - The Georgian Rake: An intriguing historical romance x1 = 2350.0 DA
 -------------------------
+OrderID: a581f5ea-d90e-4432-86b4-d3145fbf807e
+Customer: warda
+Total: 11905.0 DA
+Items:
+- The Georgian Rake: An intriguing historical romance x2 = 4700.0 DA
+- Juniper & Thorn x1 = 2205.0 DA
+- Guerres du monde émergé, Tome 3 : Un nouveau règne x2 = 5000.0 DA
+-------------------------
+OrderID: 1d698614-fe88-49b7-a445-1514b252ead5
+Customer: fadia
+Total: 11615.0 DA
+Items:
+- Guerres du monde émergé, Tome 3 : Un nouveau règne x2 = 5000.0 DA
+- Juniper & Thorn x3 = 6615.0 DA
+-------------------------
+OrderID: f6479e18-aaf9-4f00-9048-2a2da7e811ed
+Customer: Fatiha
+Total: 12249.0 DA
+Items:
+- The Georgian Rake: An intriguing historical romance x1 = 2350.0 DA
+- Juniper & Thorn x1 = 2205.0 DA
+- Guerres du monde émergé, Tome 3 : Un nouveau règne x1 = 2500.0 DA
+- Outlander, Tome 2 : Le Talisman x2 = 3780.0 DA
+- La jeune fille à la perle x2 = 1414.0 DA
+-------------------------
+OrderID: 5a055bdd-42cb-4b22-a9e4-5cb8faef8464
+Customer: kamel
+Total: 9135.0 DA
+Items:
+- The Georgian Rake: An intriguing historical romance x1 = 2350.0 DA
+- Juniper & Thorn x1 = 2205.0 DA
+- Guerres du monde émergé, Tome 3 : Un nouveau règne x1 = 2500.0 DA
+- Prince captif, Tome 3 : Le Roi, suivi de Le Palais d'été x1 = 2080.0 DA
+-------------------------
+OrderID: 4bc2f22a-3704-4e95-a17b-267d5deb74c3
+Customer: nawal
+Total: 8915.0 DA
+Items:
+- The Georgian Rake: An intriguing historical romance x2 = 4700.0 DA
+- Guerres du monde émergé, Tome 3 : Un nouveau règne x1 = 2500.0 DA
+- Outlander, Tome 1 : Le Chardon et le Tartan x1 = 1715.0 DA
+-------------------------
+OrderID: 0c1be393-0ea9-4e43-978d-691a220d7e15
+Customer: zolla
+Total: 2350.0 DA
+Items:
+- The Georgian Rake: An intriguing historical romance x1 = 2350.0 DA
+-------------------------
+OrderID: 0fd46a39-e033-4b00-adac-bfe25e9a2828
+Customer: jules
+Total: 7055.0 DA
+Items:
+- The Georgian Rake: An intriguing historical romance x1 = 2350.0 DA
+- Juniper & Thorn x1 = 2205.0 DA
+- Guerres du monde émergé, Tome 3 : Un nouveau règne x1 = 2500.0 DA
+-------------------------

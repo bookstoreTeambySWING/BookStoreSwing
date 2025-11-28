@@ -17,7 +17,6 @@ public class CheckoutController {
             return false;
         }
         Order o = OrderService.createOrder(customer, items);
-        JOptionPane.showMessageDialog(null, "Order saved. Total: " + o.getTotal() + " DA");
         return true;
     }
 }
