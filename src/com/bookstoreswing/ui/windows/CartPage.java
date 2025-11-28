@@ -8,7 +8,6 @@ import java.util.List;
 import com.bookstoreswing.service.CartService;
 import com.bookstoreswing.model.CartItem;
 import com.bookstoreswing.ui.components.HeaderPanel;
-import com.bookstoreswing.app.MainApp;
 import com.bookstoreswing.utils.ImageLoader;
 
 public class CartPage extends JFrame {
@@ -19,11 +18,12 @@ public class CartPage extends JFrame {
     private Image bgImage;
     private JLabel subtitleLabel;
 
+    private static final double TAX_RATE = 0.08;
+
     public CartPage(CartService cartService) {
 
         this.cartService = cartService;
 
-        // Load background using ImageLoader with correct path
         bgImage = ImageLoader.loadImage("assets/background/bg.jpg");
 
         setTitle("Your Cart");
@@ -37,10 +37,6 @@ public class CartPage extends JFrame {
                 super.paintComponent(g);
                 if (bgImage != null)
                     g.drawImage(bgImage, 0, 0, getWidth(), getHeight(), this);
-                else {
-                    g.setColor(new Color(35, 30, 30));
-                    g.fillRect(0, 0, getWidth(), getHeight());
-                }
             }
         };
         setContentPane(root);
@@ -126,19 +122,98 @@ public class CartPage extends JFrame {
             emptyPanel.add(exploreMsg);
 
             listPanel.add(emptyPanel);
-        } else {
+        }
+        else {
             for (CartItem item : items) {
                 listPanel.add(new BookItemPanel(item));
                 listPanel.add(Box.createVerticalStrut(18));
             }
+
+            listPanel.add(Box.createVerticalStrut(30));
+
+            double subTotal = cartService.getTotal() / 100.0;
+            double taxes = subTotal * TAX_RATE;
+            double finalTotal = subTotal + taxes;
+
+            JPanel summaryBox = new JPanel();
+            summaryBox.setOpaque(false);
+            summaryBox.setLayout(new BoxLayout(summaryBox, BoxLayout.Y_AXIS));
+            summaryBox.setBorder(new LineBorder(new Color(200, 181, 122), 2, true));
+            summaryBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+            summaryBox.setPreferredSize(new Dimension(900, 230));
+            summaryBox.setMaximumSize(new Dimension(900, 230));
+
+            JLabel summaryTitle = new JLabel("Summary");
+            summaryTitle.setFont(new Font("Georgia", Font.BOLD, 24));
+            summaryTitle.setForeground(new Color(245, 230, 210));
+            summaryTitle.setBorder(BorderFactory.createEmptyBorder(15, 20, 10, 20));
+            summaryBox.add(summaryTitle);
+
+            summaryBox.add(createRow("Sub total", formatPrice(subTotal)));
+            summaryBox.add(createRow("Taxes (8%)", formatPrice(taxes)));
+
+            JPanel line = new JPanel();
+            line.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+            line.setBackground(new Color(230, 210, 180));
+            summaryBox.add(Box.createVerticalStrut(10));
+            summaryBox.add(line);
+            summaryBox.add(Box.createVerticalStrut(10));
+
+            summaryBox.add(createRow("Total", formatPrice(finalTotal)));
+            summaryBox.add(Box.createVerticalStrut(15));
+
+            JButton finalizeButton = new JButton("finalize the order");
+            finalizeButton.setFont(new Font("Georgia", Font.BOLD, 16));
+            finalizeButton.setBackground(new Color(200, 181, 122));
+            finalizeButton.setForeground(new Color(35, 30, 30));
+            finalizeButton.setFocusPainted(false);
+            finalizeButton.setBorder(BorderFactory.createEmptyBorder(8, 40, 8, 40));
+            finalizeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+            summaryBox.add(finalizeButton);
+            summaryBox.add(Box.createVerticalStrut(15));
+
+            listPanel.add(summaryBox);
+
+            finalizeButton.addActionListener(e -> {
+                if (cartService.getItems().isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Your cart is empty.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                new CheckoutWindow(cartService).setVisible(true);
+                dispose();
+            });
         }
 
-        // update total
         double total = cartService.getTotal() / 100.0;
-        totalLabel.setText(String.format("Total: %.2f €", total).replace('.', ','));
+        totalLabel.setText("Total: " + formatPrice(total));
 
         listPanel.revalidate();
         listPanel.repaint();
+    }
+
+    private String formatPrice(double d) {
+        return String.format("%.2f €", d).replace('.', ',');
+    }
+
+    private JPanel createRow(String leftLabel, String rightValue) {
+        JPanel row = new JPanel(new BorderLayout());
+        row.setOpaque(false);
+        row.setBorder(BorderFactory.createEmptyBorder(2, 25, 2, 25));
+
+        JLabel left = new JLabel(leftLabel);
+        left.setFont(new Font("Georgia", Font.PLAIN, 18));
+        left.setForeground(new Color(240, 220, 190));
+
+        JLabel right = new JLabel(rightValue);
+        right.setFont(new Font("Georgia", Font.PLAIN, 18));
+        right.setForeground(new Color(240, 220, 190));
+        right.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        row.add(left, BorderLayout.WEST);
+        row.add(right, BorderLayout.EAST);
+
+        return row;
     }
 
     private class BookItemPanel extends JPanel {
@@ -154,12 +229,10 @@ public class CartPage extends JFrame {
             setBorder(new LineBorder(new Color(200, 181, 122), 2, true));
             setPreferredSize(new Dimension(850, 170));
 
-            // COVER IMAGE
             ImageIcon coverIcon = ImageLoader.loadIcon("assets/" + item.getBook().getImagePath(), 120, 160);
             JLabel cover = new JLabel(coverIcon);
             add(cover, BorderLayout.WEST);
 
-            // CENTER PANEL
             JPanel center = new JPanel();
             center.setOpaque(false);
             center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
@@ -172,7 +245,7 @@ public class CartPage extends JFrame {
             JLabel author = new JLabel(item.getBook().getAuthor());
             author.setForeground(new Color(240, 230, 210));
 
-            JLabel price = new JLabel(String.format("%.2f €", item.getBook().getPrice() / 100.0).replace('.', ','));
+            JLabel price = new JLabel(formatPrice(item.getBook().getPrice() / 100.0));
             price.setForeground(new Color(240, 225, 190));
             price.setFont(new Font("Georgia", Font.PLAIN, 16));
 
@@ -183,14 +256,13 @@ public class CartPage extends JFrame {
 
             add(center, BorderLayout.CENTER);
 
-            // RIGHT PANEL
             JPanel right = new JPanel();
             right.setOpaque(false);
             right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
             right.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-            JButton minus  = new JButton(ImageLoader.loadIcon("assets/icons/minus.png", 22, 22));
-            JButton plus   = new JButton(ImageLoader.loadIcon("assets/icons/plus.png", 22, 22));
+            JButton minus = new JButton(ImageLoader.loadIcon("assets/icons/minus.png", 22, 22));
+            JButton plus = new JButton(ImageLoader.loadIcon("assets/icons/plus.png", 22, 22));
             JButton remove = new JButton(ImageLoader.loadIcon("assets/icons/trash.png", 26, 26));
 
             for (JButton b : new JButton[]{minus, plus, remove}) {

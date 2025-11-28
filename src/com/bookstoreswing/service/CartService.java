@@ -37,7 +37,6 @@ public class CartService {
         items.clear(); 
     }
 
-    // ✅ FINAL: ALWAYS modify the SAME CartItem that CartPage uses
     public void increaseQuantity(int index) {
         if (index >= 0 && index < items.size()) {
             CartItem it = items.get(index);

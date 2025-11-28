@@ -1,0 +1,18 @@
+OrderID: 2434f04b-4f50-441c-b56f-fbcf316cec97
+Customer: AIDA
+Total: 2350.0 DA
+Items:
+- The Georgian Rake: An intriguing historical romance x1 = 2350.0 DA
+-------------------------
+OrderID: 8e0baf77-0883-4ff4-8c31-7c12e1a6d4d6
+Customer: aida
+Total: 2350.0 DA
+Items:
+- The Georgian Rake: An intriguing historical romance x1 = 2350.0 DA
+-------------------------
+OrderID: 22bc5e20-a4fc-48f8-bca9-58e3cb640bf0
+Customer: ef
+Total: 2350.0 DA
+Items:
+- The Georgian Rake: An intriguing historical romance x1 = 2350.0 DA
+-------------------------
